@@ -40,6 +40,10 @@ public class GeneralService {
         return competitionDTOList;
     }
 
+    public CompetitionDTO getCompetition(String id) {
+        Competition competition = competitionRepository.findById(id).orElse(null);
+        return competitionMapper.competitionDTOFromCompetition(competition);
+    }
 
     public List<SportsmanDTO> getSportsmen() {
         List<Sportsman> sportsmen = sportsmanRepository.findAll();
@@ -127,6 +131,11 @@ public class GeneralService {
     public SportsmanDTO createSportsman(SportsmanDTO sportsmanDTO) {
         Sportsman sportsman = sportsmanMapper.sportsmanFromSportsmanDTO(sportsmanDTO);
         sportsman = sportsmanRepository.save(sportsman);
+        return sportsmanMapper.sportsmanDTOFromSportsman(sportsman);
+    }
+
+    public SportsmanDTO getSportsman(String sportsmanId) {
+        Sportsman sportsman = sportsmanRepository.findById(sportsmanId).orElse(null);
         return sportsmanMapper.sportsmanDTOFromSportsman(sportsman);
     }
 }

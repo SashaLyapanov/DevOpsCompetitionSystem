@@ -30,19 +30,27 @@ public class GeneralController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("getCompetition")
+    public ResponseEntity<?> getCompetition(@RequestParam String competitionId) {
+        CompetitionDTO response = generalService.getCompetition(competitionId);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("createCompetition")
     public ResponseEntity<?> createCompetition(@RequestBody CompetitionDTO competitionDTO) {
         CompetitionDTO response = generalService.createCompetition(competitionDTO);
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("deleteCompetition")
+    @DeleteMapping("deleteCompetition")
     public ResponseEntity<?> deleteCompetition(@RequestParam String competitionId) {
+        System.out.println("Удаление соревнования " + competitionId);
         generalService.deleteCompetition(competitionId);
+        System.out.println("Соревнование удалено " + competitionId);
         return ResponseEntity.ok("Competition deleted");
     }
 
-    @PostMapping("editCompetition")
+    @PutMapping("editCompetition")
     public ResponseEntity<?> editCompetition(@RequestBody CompetitionDTO competitionDTO) {
         if (competitionDTO.getId() == null) {
             throw new IllegalArgumentException("Competition id cannot be null");
@@ -61,6 +69,12 @@ public class GeneralController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("getSportsman")
+    public ResponseEntity<?> getSportsman(@RequestParam String sportsmanId) {
+        SportsmanDTO response = generalService.getSportsman(sportsmanId);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("createSportsman")
     public ResponseEntity<?> createSportsman(@RequestBody SportsmanDTO sportsmanDTO) {
         if (sportsmanDTO == null) {
@@ -70,7 +84,7 @@ public class GeneralController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("deleteSportsman")
+    @DeleteMapping("deleteSportsman")
     public ResponseEntity<?> deleteSportsman(@RequestParam String sportsmanId) {
         if (sportsmanId == null) {
             throw new IllegalArgumentException("Sportsman id cannot be null");
@@ -79,7 +93,7 @@ public class GeneralController {
         return ResponseEntity.ok("Sportsman deleted");
     }
 
-    @PostMapping("editSportsman")
+    @PutMapping("editSportsman")
     public ResponseEntity<?> editSportsman(@RequestBody SportsmanDTO sportsmanDTO) {
         if (sportsmanDTO.getId() == null) {
             throw new IllegalArgumentException("Sportsman id cannot be null");
