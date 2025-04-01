@@ -15,8 +15,10 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                                "http://localhost:3000",    //dev
-                                "http://frontend"           //prod in Docker
+                                "http://localhost:8080",    //dev
+                                "http://localhost",    //dev
+                                "http://reverse-proxy-dev-ops",
+                                "http://frontend-dev-ops"           //prod in Docker
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")

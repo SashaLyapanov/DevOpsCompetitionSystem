@@ -1,0 +1,75 @@
+version: '3.9'
+
+services:
+  db:
+    container_name: devOpsDB
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: CompetitionSystem
+    restart: always
+#    ports:
+#      - "54322:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/script.sql:/docker-entrypoint-initdb.d/script.sql:ro
+    networks:
+      common-network:
+        aliases:
+          - db
+
+  spring-app-dev-ops:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sashalyapanov/spring-app-dev-ops:latest
+    container_name: spring-app-dev-ops
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/CompetitionSystem
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - db
+    networks:
+      common-network:
+        aliases:
+          - spring-app-dev-ops
+
+  frontend-dev-ops:
+    build:
+      context: ./../../WebstormProjects/dev-ops-client
+      dockerfile: Dockerfile
+    image: sashalyapanov/frontend-dev-ops:latest
+    container_name: frontend-dev-ops
+    restart: always
+    networks:
+      common-network:
+        aliases:
+          - frontend-dev-ops
+
+  reverse-proxy-dev-ops:
+    container_name: reverse-proxy-dev-ops
+    image: nginx:alpine
+    volumes:
+      - ./../../WebstormProjects/dev-ops-client/nginx-proxy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - spring-app-dev-ops
+      - frontend-dev-ops
+    networks:
+      common-network:
+        aliases:
+          - reverse-proxy-dev-ops
+
+volumes:
+  db-data:
+    driver: local
+
+networks:
+  common-network:
+    driver: bridge
