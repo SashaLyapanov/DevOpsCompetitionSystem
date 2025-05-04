@@ -78,5 +78,5 @@ jobs:
         run: docker build . -t sashalyapanov/spring-app-dev-ops:latest
       - name: push image to docker hub
         run:
-          docker login -u sashalyapanov -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          docker login -username  sashalyapanov --password ${{ secrets.DOCKER_HUB_TOKEN }}
           docker push sashalyapanov/spring-app-dev-ops:latest
