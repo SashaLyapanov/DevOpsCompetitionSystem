@@ -67,3 +67,15 @@ jobs:
           SPRING_DATASOURCE_USERNAME: postgres
           SPRING_DATASOURCE_PASSWORD: 123
         run: mvn test
+
+  publish_images:
+    runs_on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: build image
+        run: docker build . -t sashalyapanov/spring-app-dev-ops:latest
+      - name: push image to docker hub
+        run:
+          docker login -u sashalyapanov -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          docker push sashalyapanov/spring-app-dev-ops:latest
