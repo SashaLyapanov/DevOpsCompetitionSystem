@@ -12,6 +12,12 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
 
 @Service
@@ -53,13 +59,19 @@ public class GeneralService {
     }
 
     @Transactional
-    public CompetitionDTO createCompetition(CompetitionDTO competitionDTO) {
+    public CompetitionDTO createCompetition(CompetitionDTO competitionDTO) throws IOException, InterruptedException {
         if (competitionDTO == null) {
             throw new IllegalArgumentException("Competition DTO cannot be null");
         }
 
         Competition competition = competitionMapper.competitionFromCompetitionDTO(competitionDTO);
         competition = competitionRepository.save(competition);
+        if (competition.getId() != null) {
+            HttpClient httpClient = HttpClient.newHttpClient();
+            String message = URLEncoder.encode("Зарегистрировано новое соревнование - " + competition.getName() + ". Даты проведения: " + competition.getStartDate() + " - " + competition.getEndDate() + ".", "UTF-8");
+            String url = "https://api.telegram.org/bot8068291184:AAFx1-JqwTzVneTntFagyiwA-awSiKhU10E/sendMessage?chat_id=1054444524&text=" + message;
+            httpClient.send(HttpRequest.newBuilder(URI.create(url)).build(), HttpResponse.BodyHandlers.discarding());
+        }
         return competitionMapper.competitionDTOFromCompetition(competition);
     }
 

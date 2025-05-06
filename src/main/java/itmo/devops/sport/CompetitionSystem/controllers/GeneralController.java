@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -37,7 +38,7 @@ public class GeneralController {
     }
 
     @PostMapping("createCompetition")
-    public ResponseEntity<?> createCompetition(@RequestBody CompetitionDTO competitionDTO) {
+    public ResponseEntity<?> createCompetition(@RequestBody CompetitionDTO competitionDTO) throws IOException, InterruptedException {
         CompetitionDTO response = generalService.createCompetition(competitionDTO);
         return ResponseEntity.ok(response);
     }

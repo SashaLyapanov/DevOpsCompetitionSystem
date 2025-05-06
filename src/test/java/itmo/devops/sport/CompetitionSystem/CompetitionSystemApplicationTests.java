@@ -3,12 +3,8 @@ import itmo.devops.sport.CompetitionSystem.repositories.CompetitionRepository;
 import itmo.devops.sport.CompetitionSystem.services.GeneralService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import itmo.devops.sport.CompetitionSystem.dto.CompetitionDTO;
 import itmo.devops.sport.CompetitionSystem.dto.SportsmanDTO;
@@ -16,16 +12,14 @@ import itmo.devops.sport.CompetitionSystem.mapper.CompetitionMapper;
 import itmo.devops.sport.CompetitionSystem.mapper.SportsmanMapper;
 import itmo.devops.sport.CompetitionSystem.models.Competition;
 import itmo.devops.sport.CompetitionSystem.models.Sportsman;
-import itmo.devops.sport.CompetitionSystem.repositories.CompetitionRepository;
 import itmo.devops.sport.CompetitionSystem.repositories.SportsmanRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -128,7 +122,7 @@ class CompetitionSystemApplicationTests {
 		}
 
 		@Test
-		void createCompetition_ShouldSaveAndReturnDTO() {
+		void createCompetition_ShouldSaveAndReturnDTO() throws IOException, InterruptedException {
 			when(competitionMapper.competitionFromCompetitionDTO(any())).thenReturn(competition);
 			when(competitionRepository.save(any())).thenReturn(competition);
 			when(competitionMapper.competitionDTOFromCompetition(any())).thenReturn(competitionDTO);
