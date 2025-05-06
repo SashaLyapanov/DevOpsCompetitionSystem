@@ -92,14 +92,14 @@ jobs:
           SONAR_HOST_URL:  ${{ secrets.SONAR_HOST_URL }}
         run: |
           mvn -B verify sonar:sonar \
-            -Dsonar.projectKey=spring-app-dev-ops \
+            -Dsonar.projectKey=DevOps \
             -Dsonar.host.url=${SONAR_HOST_URL} \
             -Dsonar.login=${SONAR_TOKEN} \
             -Dsonar.qualitygate.wait=true
 
   publish_images:
     runs-on: ubuntu-latest
-    needs: test
+    needs: sonar
     steps:
       - name: checkout
         uses: actions/checkout@v4
