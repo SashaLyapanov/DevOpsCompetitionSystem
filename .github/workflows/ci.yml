@@ -97,20 +97,43 @@ jobs:
             -Dsonar.login=${SONAR_TOKEN} \
             -Dsonar.qualitygate.wait=true
 
+#  publish_images:
+#    name: DockerHub publish images
+#    runs-on: ubuntu-latest
+##    needs: sonar
+#    needs: test
+#    steps:
+#      - name: checkout
+#        uses: actions/checkout@v4
+#      - name: build image
+#        run: docker build . -t sashalyapanov/spring-app-dev-ops:latest
+#      - name: push image to docker hub
+#        run: |
+#          docker login -u sashalyapanov -p ${{ secrets.DOCKER_HUB_TOKEN }}
+#          docker push sashalyapanov/spring-app-dev-ops:latest
+
   publish_images:
     name: DockerHub publish images
     runs-on: ubuntu-latest
-#    needs: sonar
     needs: test
+    env:
+      DOCKER_USER: sashalyapanov
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
-      - name: build image
-        run: docker build . -t sashalyapanov/spring-app-dev-ops:latest
-      - name: push image to docker hub
+      - uses: actions/checkout@v4
+      - id: vars
+        run: echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
+
+      - name: Build image
         run: |
-          docker login -u sashalyapanov -p ${{ secrets.DOCKER_HUB_TOKEN }}
-          docker push sashalyapanov/spring-app-dev-ops:latest
+          docker build . \
+            -t $DOCKER_USER/spring-app-dev-ops:latest \
+            -t $DOCKER_USER/spring-app-dev-ops:${{ steps.vars.outputs.TAG }}
+
+      - name: Push to DockerHub
+        run: |
+          docker login -u $DOCKER_USER -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          docker push $DOCKER_USER/spring-app-dev-ops:latest
+          docker push $DOCKER_USER/spring-app-dev-ops:${{ steps.vars.outputs.TAG }}
 
   deploy:
     name: Deploy to K8s
@@ -133,7 +156,13 @@ jobs:
 
       - name: Substitute TAG and apply manifests
         run: |
+          TAG=${GITHUB_SHA::8}
+          IMG=$DOCKER_USER/spring-app-dev-ops:$TAG
           envsubst < k8s-deployment/deployment-spring-app.yaml | kubectl apply -f -
+#          kubectl set image deployment/spring-app-dev-ops \
+#            spring-app-dev-ops=$IMG --record
+          
+#          envsubst < k8s-deployment/deployment-spring-app.yaml | kubectl apply -f -
 
       - name: Wait for rollout
         run: |
