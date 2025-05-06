@@ -156,8 +156,9 @@ jobs:
 
       - name: Substitute TAG and apply manifests
         run: |
-          TAG=${GITHUB_SHA::8}
-          IMG=$DOCKER_USER/spring-app-dev-ops:$TAG
+          export TAG=${GITHUB_SHA::8}
+          echo "Using TAG=$TAG"
+#          IMG=$DOCKER_USER/spring-app-dev-ops:$TAG
           envsubst < k8s-deployment/deployment-spring-app.yaml | kubectl apply -f -
 #          kubectl set image deployment/spring-app-dev-ops \
 #            spring-app-dev-ops=$IMG --record
