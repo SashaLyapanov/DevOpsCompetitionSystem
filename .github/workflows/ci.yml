@@ -158,12 +158,7 @@ jobs:
         run: |
           export TAG=${GITHUB_SHA::8}
           echo "Using TAG=$TAG"
-#          IMG=$DOCKER_USER/spring-app-dev-ops:$TAG
           envsubst < k8s-deployment/deployment-spring-app.yaml | kubectl apply -f -
-#          kubectl set image deployment/spring-app-dev-ops \
-#            spring-app-dev-ops=$IMG --record
-          
-#          envsubst < k8s-deployment/deployment-spring-app.yaml | kubectl apply -f -
 
       - name: Wait for rollout
         run: |
