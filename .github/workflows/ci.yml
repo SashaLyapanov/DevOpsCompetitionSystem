@@ -100,7 +100,8 @@ jobs:
   publish_images:
     name: DockerHub publish images
     runs-on: ubuntu-latest
-    needs: sonar
+#    needs: sonar
+    needs: test
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -110,3 +111,31 @@ jobs:
         run: |
           docker login -u sashalyapanov -p ${{ secrets.DOCKER_HUB_TOKEN }}
           docker push sashalyapanov/spring-app-dev-ops:latest
+
+  deploy:
+    name: Deploy to K8s
+    runs-on: ubuntu-latest
+    needs: publish_images
+    env:
+      DOCKER_USER: sashalyapanov
+      SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with: { version: v1.30.0 }
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+
+      - name: Substitute TAG and apply manifests
+        run: |
+          export TAG=${SHA}
+          envsubst < deployment-spring-app.yaml | kubectl apply -f -
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/spring-app-dev-ops
