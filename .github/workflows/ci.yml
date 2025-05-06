@@ -132,8 +132,8 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
 
       - name: Substitute TAG and apply manifests
-        env:
-          TAG: latest
+#        env:
+#          TAG: latest
         run: |
           envsubst < k8s-deployment/deployment-spring-app.yaml | kubectl apply -f -
 
