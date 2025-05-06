@@ -135,7 +135,6 @@ jobs:
         env:
           TAG: ${{ github.sha }}
         run: |
-          export TAG=${SHA}
           envsubst < k8s-deployment/deployment-spring-app.yaml | kubectl apply -f -
 
       - name: Wait for rollout

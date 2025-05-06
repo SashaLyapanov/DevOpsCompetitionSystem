@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app-dev-ops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-app-dev-ops
+  template:
+    metadata:
+      labels:
+        app: spring-app-dev-ops
+    spec:
+      containers:
+        - name: spring-app-dev-ops
+          image: sashalyapanov/spring-app-dev-ops:${TAG}
+          imagePullPolicy: Always
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://devopsdb:5432/CompetitionSystem"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "postgres"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "postgres"
+          resources:
+            requests:
+              cpu: "100m"
+            limits:
+              cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-app-dev-ops
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: spring-app-dev-ops
