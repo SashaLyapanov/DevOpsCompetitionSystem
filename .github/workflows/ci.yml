@@ -114,7 +114,7 @@ jobs:
 
   deploy:
     name: Deploy to K8s
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, k8s]
     needs: publish_images
     env:
       DOCKER_USER: sashalyapanov
