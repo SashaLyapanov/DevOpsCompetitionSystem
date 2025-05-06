@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: spring-app-dev-ops
-          image: sashalyapanov/spring-app-dev-ops:${TAG}
+          image: sashalyapanov/spring-app-dev-ops:latest
           imagePullPolicy: Always
           env:
             - name: SPRING_DATASOURCE_URL
