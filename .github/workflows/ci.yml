@@ -132,9 +132,11 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
 
       - name: Substitute TAG and apply manifests
-        run: |
-          export TAG=${SHA}
-          envsubst < deployment-spring-app.yaml | kubectl apply -f -
+        env:
+          TAG: ${{ github.sha }}
+          run: |
+            export TAG=${SHA}
+            envsubst < k8s-deployment/deployment-spring-app.yaml | kubectl apply -f -
 
       - name: Wait for rollout
         run: |
