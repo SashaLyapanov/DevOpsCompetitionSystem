@@ -28,7 +28,7 @@ public class GeneralController {
     @GetMapping("getCompetitions")
     public ResponseEntity<?> getCompetitions() {
         List<CompetitionDTO> response = generalService.getCompetitions();
-        System.out.println("Образ обновился3.0!!!");
+        System.out.println("Образ обновился4.0!!!");
         return ResponseEntity.ok(response);
     }
 
